@@ -2,6 +2,7 @@ package test.Drivers;
 
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.logging.LogType;
@@ -22,11 +23,20 @@ public class Browser {
         MutableCapabilities mutableCapabilities;
         if (browser_name.equalsIgnoreCase("chrome")) {
             mutableCapabilities = new ChromeOptions();
+            WEB_DRIVER.set(new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), mutableCapabilities));
+
 
         } else if (browser_name.equalsIgnoreCase("firefox")) {
             mutableCapabilities = new FirefoxOptions();
+            WEB_DRIVER.set(new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), mutableCapabilities));
 
-        } else {
+        }
+        else if (browser_name.equalsIgnoreCase("localchrome")) {
+            mutableCapabilities = new ChromeOptions();
+            System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir")+"/driver/chromedriver");
+            WEB_DRIVER.set(new ChromeDriver());
+        }
+        else {
             throw new RuntimeException("Please pass valid Browser name....");
         }
 
@@ -35,7 +45,6 @@ public class Browser {
         logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
         mutableCapabilities.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
 
-        WEB_DRIVER.set(new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), mutableCapabilities));
     }
 
     public WebDriver getDriver() {
